@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL,MySQLdb
 from smtplib import SMTP
 from email.message import EmailMessage
 import bcrypt
+import re
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -52,9 +53,14 @@ def registrar():
         email = request.form['email']
         password = request.form['password'].encode('utf-8')
         hash_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        imagen = request.form['imagen']
+        celular = request.form['celular']
+        direccion = request.form['direccion']
+        descripcion = request.form['descripcion']
 
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users (name, email, password) VALUES (%s,%s,%s)",(name,email,hash_password,))
+        cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,hash_password,imagen,celular,direccion,descripcion,))
+        
         mysql.connection.commit()
         session['name'] = request.form['name']
         session['email'] = request.form['email']
@@ -63,12 +69,12 @@ def registrar():
         msg.set_content('Señor usuario bienvenido',)
 
         msg['Subject'] = 'confirmcion correo'
-        msg['From'] = ""
+        msg['From'] = "brayanbotina2020@itp.edu.co"
         msg['To'] = email = request.form['email']
 
         # Reemplaza estos valores con tus credenciales de Google Mail
-        username = ''
-        password = ''
+        username = 'brayanbotina2020@itp.edu.co'
+        password = '1006947880'
 
         server = SMTP('smtp.gmail.com:587')
         server.starttls()
