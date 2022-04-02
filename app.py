@@ -69,12 +69,12 @@ def registrar():
         msg.set_content('Señor usuario bienvenido',)
 
         msg['Subject'] = 'confirmcion correo'
-        msg['From'] = "brayanbotina2020@itp.edu.co"
+        msg['From'] = ""
         msg['To'] = email = request.form['email']
 
         # Reemplaza estos valores con tus credenciales de Google Mail
-        username = 'brayanbotina2020@itp.edu.co'
-        password = '1006947880'
+        username = ''
+        password = ''
 
         server = SMTP('smtp.gmail.com:587')
         server.starttls()
