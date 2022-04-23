@@ -34,21 +34,21 @@ def entrar():
             email,
             password,
             ))
-        usuario = cursor.fetchone()
-        cursor.close()
+        usuario = cur.fetchone()
+        cur.close()
 
         if usuario:
             if password == usuario["password"]:
                 session['email']=usuario['email']
                 session['password']=usuario['password']
-                return render_template("entrar.html")
+                return render_template("inicio.html")
             else:
                 flash("correo o contraeña incorrectos")
                 return render_template("usuario o contraseña incorrectos")
         
         else:
             flash("alguno de los campos son incorretos")
-            return render_template("entrar.html")
+            return render_template("entrada.html")
     
         
 
@@ -118,12 +118,12 @@ def registrar():
         msg.set_content('Señor usuario bienvenido',)
 
         msg['Subject'] = 'confirmcion correo'
-        msg['From'] = ""
+        msg['From'] = "yeinerangulo2020@itp.edu.co"
         msg['To'] = email
 
         # Reemplaza estos valores con tus credenciales de Google Mail
-        username = ''
-        password = ''
+        username = 'yeinerangulo2020@itp.edu.co'
+        password = '1193221281'
 
         server = SMTP('smtp.gmail.com:587')
         server.starttls()
@@ -131,9 +131,51 @@ def registrar():
         server.send_message(msg)
 
         server.quit()
-
+        #return render_template("index.html")
         return redirect(url_for('inicio'))
 
+@app.route('/registrar_productos', methods=["GET", "POST"])
+def registrar_pro():
+    
+    if request.method == 'GET':
+        print("mostrando el formulario")
+        return render_template("inicio.html")
+    else:
+        print("registrando el producto")
+        name = request.form['name_producto']
+        descripcion = request.form['des_producto']
+        precio = request.form['pre_productos']
+        imagen = request.form['img_producto']
+
+        is_valid = True
+    
+        if name =="":
+            flash("es requerido el nombre para el registro del producto")
+            is_valid= False
+        
+        if descripcion =="":
+            flash("es requerido la descripcion para el registro del producto")
+            is_valid= False
+        
+        if precio =="":
+            flash("es requerido el precio para el registro del producto")
+            is_valid= False
+    
+        if imagen =="":
+            is_valid= False
+
+        if is_valid == False:
+            print("los datos no son validos")
+            return render_template("registros.html")
+
+        
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO creacion_productos (nombre, descripcion, precio, imagen) VALUES (%s,%s,%s,%s)",(name,descripcion,precio,imagen,))
+        mysql.connection.commit()
+        
+
+        return redirect(url_for('inicio'))
+        
 @app.route("/entrar/confirmar/<token>")
 def confirmarEmail(token):
     try:
