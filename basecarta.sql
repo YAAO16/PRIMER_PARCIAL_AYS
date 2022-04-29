@@ -1,6 +1,6 @@
 /*
-SQLyog Enterprise v13.1.1 (64 bit)
-MySQL - 10.4.20-MariaDB : Database - baselogin
+SQLyog Ultimate v12.4.3 (64 bit)
+MySQL - 10.4.22-MariaDB : Database - baselogin
 *********************************************************************
 */
 
@@ -16,6 +16,21 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`baselogin` /*!40100 DEFAULT CHARACTER S
 
 USE `baselogin`;
 
+/*Table structure for table `creacion_productos` */
+
+DROP TABLE IF EXISTS `creacion_productos`;
+
+CREATE TABLE `creacion_productos` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(60) NOT NULL,
+  `descripcion` varchar(60) NOT NULL,
+  `precio` varchar(60) NOT NULL,
+  `imagen` blob NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `creacion_productos` */
+
 /*Table structure for table `users` */
 
 DROP TABLE IF EXISTS `users`;
@@ -24,7 +39,7 @@ CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
   `email` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL,
+  `password` varchar(50) NOT NULL,
   `imagen` blob NOT NULL,
   `celular` varchar(12) NOT NULL,
   `direccion` varchar(30) NOT NULL,
@@ -37,7 +52,7 @@ CREATE TABLE `users` (
 
 insert  into `users`(`id`,`name`,`email`,`password`,`imagen`,`celular`,`direccion`,`descripcion`,`estado`) values 
 (19,'adrian','prueba16@yopmail.com','$2b$12$vJslUVOg1Otv0','WhatsApp Image 2022-03-22 at 9.34.31 AM(1).jpeg','3143425736','luis carlos galan','mega tienda',0),
-(37,'adrian angulo','angulo@yopmail.com','$2b$12$iQqTHa2FrnQyE','WhatsApp Image 2022-03-22 at 9.13.03 AM(2).jpeg','3143425736','calle 16','empanadas',0),
+(37,'adrian angulo','angulo@yopmail.com','c138b130d004bd0df4aca211d5bfe84dd00c8220','WhatsApp Image 2022-03-22 at 9.13.03 AM(2).jpeg','3143425736','calle 16','empanadas',1),
 (38,'andres','andres@yopmail.com','$2b$12$bQC1.1r2R9b2V','WhatsApp Image 2022-03-22 at 9.34.31 AM(1).jpeg','1531','OBREOR','HDBVJB',0),
 (39,'andres','andres@yopmail.com','$2b$12$LX7T/sihvQ4eX','WhatsApp Image 2022-03-22 at 9.34.31 AM(1).jpeg','1531','OBREOR','HDBVJB',0),
 (40,'adri','adri@yopmail.com','adri','WhatsApp Image 2022-03-22 at 9.29.49 AM.jpeg','123456','nose','nose',0),
