@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import Flask, render_template, request, redirect, url_for, session,flash
 from flask_mysqldb import MySQL,MySQLdb
 from smtplib import SMTP
@@ -24,11 +25,12 @@ def inicio():
 def entrar():
     if request.method == 'GET':
         return render_template("entrada.html")
-    
     else:
-        email = request.form.get('correo')
+        email = request.form.get('email')
         password = request.form.get('password')
+        #print(email,password)
         password = hashlib.sha1(password.encode()).hexdigest()
+        #print(email,password)
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM users WHERE email = %s and password=%s and estado='1'", (
             email,
@@ -41,16 +43,78 @@ def entrar():
             if password == usuario["password"]:
                 session['email']=usuario['email']
                 session['password']=usuario['password']
-                return render_template("inicio.html")
+                session['name']=usuario['name']
+                return render_template('index.html')
+                #return redirect(url_for('inicio'))  
+                
             else:
                 flash("correo o contraeña incorrectos")
-                return render_template("usuario o contraseña incorrectos")
-        
+                #return render_template("usuario o contraseña incorrectos")
+                print("no entro el usuario")
         else:
+            print("usuario no encontrado")
             flash("alguno de los campos son incorretos")
-            return render_template("entrada.html")
-    
+            return render_template("entrada.html") 
         
+@app.route('/nu_contra', methods=["GET", "POST"])
+def nu_contra():
+    return render_template("nu_contra.html")
+
+
+@app.route('/recuperarp', methods=["GET", "POST"])
+def rec_contra():
+        if request.method =='GET':
+            return render_template('rec_contra.html')
+        else:
+            email = request.form.get('email_form')
+
+            cur = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM usuarios WHERE correo = %s and estado='1'", (
+                correo,
+                ))
+            usuario = cur.fetchone()
+            cur.close()
+
+            if not(usuario):
+                flash('correo invalido')
+                print("no entro")
+                return render_template('rec_contra.html')
+
+            is_valid = True
+
+            if correo =='':
+                flash('Ingrese el correo')
+                print("entro")
+                is_valid = False
+
+            if is_valid == False:
+                return render_template('rec_contra.html', email = email)
+
+            msg = EmailMessage()
+            msg.set_content('RESTABLECIMIENTO DE CONTRASEÑA',)
+
+            msg['Subject'] = 'confirmacion de cambio de usuario'
+            msg['From'] = "yeinerangulo2020@itp.edu.co"
+            msg['To'] = email
+
+            # Reemplaza estos valores con tus credenciales de Google Mail
+            username = 'yeinerangulo2020@itp.edu.co'
+            password = 'adrian16x'
+
+            server = SMTP('smtp.gmail.com:587')
+            server.starttls()
+            server.login(username, password)
+            server.send_message(msg)
+
+            server.quit()
+            flash("REVISA TU CORREO")
+            
+            return render_template('rec_contra.html')
+
+
+@app.route('/volver', methods=["GET", "POST"])
+def volver():
+    return render_template("inicio.html")
 
 @app.route('/cerrar', methods=["GET", "POST"])
 def cerrar():
@@ -64,75 +128,76 @@ def registrar():
         return render_template("registros.html")
     else:
 
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password'].encode('utf-8')
-        password_encri = bcrypt.hashpw(password, bcrypt.gensalt())
-        imagen = request.form['imagen']
-        celular = request.form['celular']
-        direccion = request.form['direccion']
-        descripcion = request.form['descripcion']
+         name = request.form['name']
+         email = request.form['email']
+         password = request.form['password'].encode('utf-8')
+         password = hashlib.sha1(password.encode()).hexdigest()
+         imagen = request.form['imagen']
+         celular = request.form['celular']
+         direccion = request.form['direccion']
+         descripcion = request.form['descripcion']
 
-        is_valid = True
+         is_valid = True
     
-        if name =="":
-            flash("es requerido el nombre")
-            is_valid= False
+         if name =="":
+             flash("es requerido el nombre")
+             is_valid= False
         
-        if email =="":
-            flash("es requerido el email")
-            is_valid= False
+         if email =="":
+             flash("es requerido el email")
+             is_valid= False
         
-        if password =="":
-            flash("es requerido la contraseña")
-            is_valid= False
+         if password =="":
+             flash("es requerido la contraseña")
+             is_valid= False
     
-        if imagen =="":
-            is_valid= False
+         if imagen =="":
+             is_valid= False
 
-        if celular =="":
-            flash("es requerido el telefono")
-            is_valid= False 
+         if celular =="":
+             flash("es requerido el telefono")
+             is_valid= False 
 
-        if direccion =="":
-            flash("es requerido la direccion")
-            is_valid= False  
+         if direccion =="":
+             flash("es requerido la direccion")
+             is_valid= False  
         
-        if descripcion =="":
-            flash("es requerida la descripcion")
-            is_valid= False
+         if descripcion =="":
+             flash("es requerida la descripcion")
+             is_valid= False
 
-        if is_valid == False:
-            print("los datos no son validos")
-            return render_template("registros.html")
+         if is_valid == False:
+             print("los datos no son validos")
+             return render_template("registros.html")
 
         
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
+         cur = mysql.connection.cursor()
+         cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
         
-        mysql.connection.commit()
-        session['name'] = request.form['name']
-        session['email'] = request.form['email']
+         mysql.connection.commit()
+         session['name'] = request.form['name']
+         session['email'] = request.form['email']
 
-        msg = EmailMessage()
-        msg.set_content('Señor usuario bienvenido',)
+         msg = EmailMessage()
+         msg.set_content('Señor usuario bienvenido',)
 
-        msg['Subject'] = 'confirmcion correo'
-        msg['From'] = "yeinerangulo2020@itp.edu.co"
-        msg['To'] = email
+         msg['Subject'] = 'confirmcion correo'
+         msg['From'] = "yeinerangulo2020@itp.edu.co"
+         msg['To'] = email
 
-        # Reemplaza estos valores con tus credenciales de Google Mail
-        username = 'yeinerangulo2020@itp.edu.co'
-        password = '1193221281'
+         # Reemplaza estos valores con tus credenciales de Google Mail
+         username = 'yeinerangulo2020@itp.edu.co'
+         password = '1193221281'
 
-        server = SMTP('smtp.gmail.com:587')
-        server.starttls()
-        server.login(username, password)
-        server.send_message(msg)
+         server = SMTP('smtp.gmail.com:587')
+         server.starttls()
+         server.login(username, password)
+         server.send_message(msg)
 
-        server.quit()
-        #return render_template("index.html")
-        return redirect(url_for('inicio'))
+         server.quit()
+        
+    return render_template("index.html")
+        #return redirect(url_for('inicio'))
 
 @app.route('/registrar_productos', methods=["GET", "POST"])
 def registrar_pro():
