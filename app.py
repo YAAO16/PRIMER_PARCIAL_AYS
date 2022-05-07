@@ -44,7 +44,7 @@ def entrar():
                 session['email']=usuario['email']
                 session['password']=usuario['password']
                 session['name']=usuario['name']
-                return render_template('index.html')
+                return render_template('index_producto.html')
                 #return redirect(url_for('inicio'))  
                 
             else:
@@ -54,7 +54,8 @@ def entrar():
         else:
             print("usuario no encontrado")
             flash("alguno de los campos son incorretos")
-            return render_template("entrada.html") 
+
+    return render_template("entrada.html") 
         
 @app.route('/nu_contra', methods=["GET", "POST"])
 def nu_contra():
@@ -196,56 +197,73 @@ def registrar():
 
          server.quit()
         
-    return render_template("index.html")
+    return render_template("index_producto.html")
         #return redirect(url_for('inicio'))
 
-@app.route('/registrar_productos', methods=["GET", "POST"])
-def registrar_pro():
-    
+# @app.route('/cre_prod', methods=["GET", "POST"])
+# def crear_prod():
+#     
+
+
+@app.get('/mos_pro')
+def mos_pro():
+    cur=mysql.connection.cursor()
+    cur.execute("select * from creacion_productos")
+    productos = cur.fetchall()
+    cur.close()
+        
+    return render_template('mos_prod.html',productos=productos)
+
+
+@app.route('/carrito', methods=['GET','POST'])
+def carrito():
+        return render_template('carrito.html')
+
+@app.route('/cre_prod', methods=['GET','POST'])
+def crear_prod():
     if request.method == 'GET':
-        print("mostrando el formulario")
-        return render_template("inicio.html")
-    else:
-        print("registrando el producto")
-        name = request.form['name_producto']
-        descripcion = request.form['des_producto']
-        precio = request.form['pre_productos']
-        imagen = request.form['img_producto']
+    #         print("mostrando el formulario")
+#         return render_template("inicio.html")
+#     else:
+#         print("registrando el producto")
+#         name = request.form['name_pro']
+#         descripcion = request.form['des_producto']
+#         precio = request.form['pre_productos']
+#         imagen = request.form['img_producto']
 
-        is_valid = True
+#         is_valid = True
     
-        if name =="":
-            flash("es requerido el nombre para el registro del producto")
-            is_valid= False
+#         if name =="":
+#             flash("es requerido el nombre para el registro del producto")
+#             is_valid= False
         
-        if descripcion =="":
-            flash("es requerido la descripcion para el registro del producto")
-            is_valid= False
+#         if descripcion =="":
+#             flash("es requerido la descripcion para el registro del producto")
+#             is_valid= False
         
-        if precio =="":
-            flash("es requerido el precio para el registro del producto")
-            is_valid= False
+#         if precio =="":
+#             flash("es requerido el precio para el registro del producto")
+#             is_valid= False
     
-        if imagen =="":
-            is_valid= False
+#         if imagen =="":
+#             is_valid= False
 
-        if is_valid == False:
-            print("los datos no son validos")
-            return render_template("registros.html")
+#         if is_valid == False:
+#             print("los datos no son validos")
+#             return render_template("mos_prod.html")
 
         
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO creacion_productos (nombre, descripcion, precio, imagen) VALUES (%s,%s,%s,%s)",(name,descripcion,precio,imagen,))
-        mysql.connection.commit()
-        
+#         cur = mysql.connection.cursor()
+#         cur.execute("INSERT INTO creacion_productos (nombre, descripcion, precio, imagen) VALUES (%s,%s,%s,%s)",(name,descripcion,precio,imagen,))
+#         mysql.connection.commit()
 
-        return redirect(url_for('inicio'))
-        
+        return render_template('crea_prod.html')
+
 @app.route("/entrar/confirmar/<token>")
 def confirmarEmail(token):
     try:
         email=s.loads(token, salt='emcof', max_age=60)
-        cur = mysql.connection.cursor()()
+        cur = mysql.connection.cursor()
         cur.execute("UPDATE users SET estado='1' WHERE email='"+email+"'")
         cur.close()
     except SignatureExpired:
