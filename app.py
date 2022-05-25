@@ -214,10 +214,98 @@ def mos_pro():
         
     return render_template('mos_prod.html',productos=productos)
 
+@app.route('/editarpro', methods=['GET','POST'])
+def editarprod():
+    cur =mysql.connection.cursor()
+    cur.execute("SELECT * FROM productos WHERE id = {0}".format(id))
+    item = cursor.fetchall()
+    cur.close()
+
+    return render_template('editar_producto.html',productos=productos)
+
+@app.route('/eliminarpro', methods=['GET','POST'])
+def eliminarprod():
+    cur=mysql.connection.cursor()
+    cur.execute("delete from productos where id={0}".format(id))
+    cur.close()
+    return render_template('mos_prod.html',productos=productos)
 
 @app.route('/carrito', methods=['GET','POST'])
 def carrito():
-        return render_template('carrito.html')
+    return render_template('carrito.html')
+
+@app.route('/actu_usu', methods=['POST'])
+def actual_usua():
+    if request.method == 'POST':
+         name = request.form['name']
+         email = request.form['email']
+         password = request.form['password'].encode('utf-8')
+         password = hashlib.sha1(password.encode()).hexdigest()
+         imagen = request.form['imagen']
+         celular = request.form['celular']
+         direccion = request.form['direccion']
+         descripcion = request.form['descripcion']
+
+         is_valid = True
+    
+         if name =="":
+             flash("es requerido el nombre")
+             is_valid= False
+        
+         if email =="":
+             flash("es requerido el email")
+             is_valid= False
+        
+         if password =="":
+             flash("es requerido la contraseña")
+             is_valid= False
+    
+         if imagen =="":
+             is_valid= False
+
+         if celular =="":
+             flash("es requerido el telefono")
+             is_valid= False 
+
+         if direccion =="":
+             flash("es requerido la direccion")
+             is_valid= False  
+        
+         if descripcion =="":
+             flash("es requerida la descripcion")
+             is_valid= False
+
+         if is_valid == False:
+             print("los datos no son validos")
+             return render_template("registros.html")
+
+        
+         cur = mysql.connection.cursor()
+         cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
+        
+         mysql.connection.commit()
+         session['name'] = request.form['name']
+         session['email'] = request.form['email']
+
+         msg = EmailMessage()
+         msg.set_content('Señor usuario bienvenido',)
+
+         msg['Subject'] = 'confirmcion correo'
+         msg['From'] = "yeinerangulo2020@itp.edu.co"
+         msg['To'] = email
+
+         # Reemplaza estos valores con tus credenciales de Google Mail
+         username = 'yeinerangulo2020@itp.edu.co'
+         password = '1193221281'
+
+         server = SMTP('smtp.gmail.com:587')
+         server.starttls()
+         server.login(username, password)
+         server.send_message(msg)
+
+         server.quit()
+        
+    return render_template('index_producto.html')
 
 @app.route('/cre_prod', methods=['GET','POST'])
 def crear_prod():
