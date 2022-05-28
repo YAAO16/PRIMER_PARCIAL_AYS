@@ -6,9 +6,10 @@ from email.message import EmailMessage
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import bcrypt
 import re
-import hashlib
+import hashlib 
+from hashlib import sha256
 
-
+#a=URLSafeTimedSerializer('Thisisasecret')
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -129,80 +130,76 @@ def registrar():
         return render_template("registros.html")
     else:
 
-         name = request.form['name']
-         email = request.form['email']
-         password = request.form['password'].encode('utf-8')
-         password = hashlib.sha1(password.encode()).hexdigest()
-         imagen = request.form['imagen']
-         celular = request.form['celular']
-         direccion = request.form['direccion']
-         descripcion = request.form['descripcion']
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        password_encri = hashlib.sha256(password.encode()).hexdigest()
+        imagen = request.form['imagen']
+        celular = request.form['celular']
+        direccion = request.form['direccion']
+        descripcion = request.form['descripcion']
 
-         is_valid = True
+        is_valid = True
     
-         if name =="":
-             flash("es requerido el nombre")
-             is_valid= False
+        if name =="":
+            flash("es requerido el nombre")
+            is_valid= False
         
-         if email =="":
-             flash("es requerido el email")
-             is_valid= False
+        if email =="":
+            flash("es requerido el email")
+            is_valid= False
         
-         if password =="":
-             flash("es requerido la contraseña")
-             is_valid= False
+        if password =="":
+            flash("es requerido la contraseña")
+            is_valid= False
     
-         if imagen =="":
-             is_valid= False
+        if imagen =="":
+            is_valid= False
 
-         if celular =="":
-             flash("es requerido el telefono")
-             is_valid= False 
+        if celular =="":
+            flash("es requerido el telefono")
+            is_valid= False 
 
-         if direccion =="":
-             flash("es requerido la direccion")
-             is_valid= False  
+        if direccion =="":
+            flash("es requerido la direccion")
+            is_valid= False  
         
-         if descripcion =="":
-             flash("es requerida la descripcion")
-             is_valid= False
+        if descripcion =="":
+            flash("es requerida la descripcion")
+            is_valid= False
 
-         if is_valid == False:
-             print("los datos no son validos")
-             return render_template("registros.html")
+        if is_valid == False:
+            print("los datos no son validos")
+            return render_template("registros.html")
 
         
-         cur = mysql.connection.cursor()
-         cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
         
-         mysql.connection.commit()
-         session['name'] = request.form['name']
-         session['email'] = request.form['email']
+        mysql.connection.commit()
+        session['name'] = request.form['name']
+        session['email'] = request.form['email']
 
-         msg = EmailMessage()
-         msg.set_content('Señor usuario bienvenido',)
+        msg = EmailMessage()
+        msg.set_content('Señor usuario bienvenido',)
 
-         msg['Subject'] = 'confirmcion correo'
-         msg['From'] = "yeinerangulo2020@itp.edu.co"
-         msg['To'] = email
+        msg['Subject'] = 'confirmcion correo'
+        msg['From'] = "yeinerangulo2020@itp.edu.co"
+        msg['To'] = email
 
          # Reemplaza estos valores con tus credenciales de Google Mail
-         username = 'yeinerangulo2020@itp.edu.co'
-         password = '1193221281'
+        username = 'yeinerangulo2020@itp.edu.co'
+        password = '1193221281'
 
-         server = SMTP('smtp.gmail.com:587')
-         server.starttls()
-         server.login(username, password)
-         server.send_message(msg)
+        server = SMTP('smtp.gmail.com:587')
+        server.starttls()
+        server.login(username, password)
+        server.send_message(msg)
 
-         server.quit()
+        server.quit()
         
     return render_template("index_producto.html")
-        #return redirect(url_for('inicio'))
-
-# @app.route('/cre_prod', methods=["GET", "POST"])
-# def crear_prod():
-#     
+     
 
 
 @app.get('/mos_pro')
@@ -234,132 +231,136 @@ def eliminarprod():
 def carrito():
     return render_template('carrito.html')
 
-@app.route('/actu_usu', methods=['POST'])
+@app.route('/actu_usu')
 def actual_usua():
     if request.method == 'POST':
-         name = request.form['name']
-         email = request.form['email']
-         password = request.form['password'].encode('utf-8')
-         password = hashlib.sha1(password.encode()).hexdigest()
-         imagen = request.form['imagen']
-         celular = request.form['celular']
-         direccion = request.form['direccion']
-         descripcion = request.form['descripcion']
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password'].encode('utf-8')
+        password = hashlib.sha1(password.encode()).hexdigest()
+        imagen = request.form['imagen']
+        celular = request.form['celular']
+        direccion = request.form['direccion']
+        descripcion = request.form['descripcion']
 
-         is_valid = True
+        is_valid = True
     
-         if name =="":
+        if name =="":
              flash("es requerido el nombre")
              is_valid= False
         
-         if email =="":
+        if email =="":
              flash("es requerido el email")
              is_valid= False
         
-         if password =="":
+        if password =="":
              flash("es requerido la contraseña")
              is_valid= False
     
-         if imagen =="":
+        if imagen =="":
              is_valid= False
 
-         if celular =="":
+        if celular =="":
              flash("es requerido el telefono")
              is_valid= False 
 
-         if direccion =="":
+        if direccion =="":
              flash("es requerido la direccion")
              is_valid= False  
         
-         if descripcion =="":
+        if descripcion =="":
              flash("es requerida la descripcion")
              is_valid= False
 
-         if is_valid == False:
+        if is_valid == False:
              print("los datos no son validos")
              return render_template("registros.html")
 
         
-         cur = mysql.connection.cursor()
-         cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
-        
-         mysql.connection.commit()
-         session['name'] = request.form['name']
-         session['email'] = request.form['email']
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO users (name, email, password, imagen, celular, direccion, descripcion) VALUES (%s,%s,%s,%s,%s,%s,%s)",(name,email,password_encri,imagen,celular,direccion,descripcion,))
 
-         msg = EmailMessage()
-         msg.set_content('Señor usuario bienvenido',)
+        #token=s.dumps(correo, salt='email-confirm')
+        #link= url_for('confirmarEmail', token=token, _external=True)
+                
+        mysql.connection.commit()
+        session['name'] = request.form['name']
+        session['email'] = request.form['email']
 
-         msg['Subject'] = 'confirmcion correo'
-         msg['From'] = "yeinerangulo2020@itp.edu.co"
-         msg['To'] = email
+        msg = EmailMessage()
+        msg.set_content('Señor usuario bienvenido',)
+
+        msg['Subject'] = 'confirmcion correo'
+        msg['From'] = "yeinerangulo2020@itp.edu.co"
+        msg['To'] = email
 
          # Reemplaza estos valores con tus credenciales de Google Mail
-         username = 'yeinerangulo2020@itp.edu.co'
-         password = '1193221281'
+        username = 'yeinerangulo2020@itp.edu.co'
+        password = '1193221281'
 
-         server = SMTP('smtp.gmail.com:587')
-         server.starttls()
-         server.login(username, password)
-         server.send_message(msg)
+        server = SMTP('smtp.gmail.com:587')
+        server.starttls()
+        server.login(username, password)
+        server.send_message(msg)
 
-         server.quit()
+        server.quit()
         
-    return render_template('index_producto.html')
+    return render_template('actua_infor.html')
 
-@app.route('/cre_prod', methods=['GET','POST'])
-def crear_prod():
+@app.route('/crea_prod', methods=['GET','POST'])
+def crea_prod():
     if request.method == 'GET':
-    #         print("mostrando el formulario")
-#         return render_template("inicio.html")
-#     else:
-#         print("registrando el producto")
-#         name = request.form['name_pro']
-#         descripcion = request.form['des_producto']
-#         precio = request.form['pre_productos']
-#         imagen = request.form['img_producto']
+        print("mostrando el formulario")
+        return render_template("crea_prod.html")
+    else:
+        print("no pasa el producto")
+        name = request.form.get('name_pro')
+        descripcion = request.form.get('des_producto')
+        precio = request.form.get('pre_productos')
+        imagen = request.form.get('img_producto')
 
-#         is_valid = True
+        is_valid = True
     
-#         if name =="":
-#             flash("es requerido el nombre para el registro del producto")
-#             is_valid= False
+        if name =="":
+            flash("es requerido el nombre para el registro del producto")
+            is_valid= False
         
-#         if descripcion =="":
-#             flash("es requerido la descripcion para el registro del producto")
-#             is_valid= False
+        if descripcion =="":
+            flash("es requerido la descripcion para el registro del producto")
+            is_valid= False
         
-#         if precio =="":
-#             flash("es requerido el precio para el registro del producto")
-#             is_valid= False
+        if precio =="":
+            flash("es requerido el precio para el registro del producto")
+            is_valid= False
     
-#         if imagen =="":
-#             is_valid= False
+        if imagen =="":
+            is_valid= False
 
-#         if is_valid == False:
-#             print("los datos no son validos")
-#             return render_template("mos_prod.html")
+        if is_valid == False:
+            print("los datos no son validos")
+            return render_template("crea_prod.html")
 
         
-#         cur = mysql.connection.cursor()
-#         cur.execute("INSERT INTO creacion_productos (nombre, descripcion, precio, imagen) VALUES (%s,%s,%s,%s)",(name,descripcion,precio,imagen,))
-#         mysql.connection.commit()
-
-        return render_template('crea_prod.html')
-
-@app.route("/entrar/confirmar/<token>")
-def confirmarEmail(token):
-    try:
-        email=s.loads(token, salt='emcof', max_age=60)
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE users SET estado='1' WHERE email='"+email+"'")
-        cur.close()
-    except SignatureExpired:
-        cur = db.cursor()
-        cur.execute("DELETE FROM users WHERE email='"+email+"' AND estado='0'")
-        cur.close()
-        return "<h1>EXPIRO EL TIEMPO VUELVA A INTERNTARLO</h1>"
-    return "<h1>"+email+"  CONFIRMADO BIENVENIDO</h1>"
+        cur.execute("INSERT INTO creacion_productos (nombre, descripcion, precio, imagen) VALUES (%s,%s,%s,%s)",(name,descripcion,precio,imagen,))
+        mysql.connection.commit()
+
+    return render_template('mos_prod.html')
+
+# @app.route("/entrar/confirmar/<token>")
+# def confirmarEmail(token):
+#     try:
+#         email=a.loads(token, salt='emcof', max_age=60)
+#         cur = mysql.connection.cursor()
+#         cur.execute("UPDATE users SET estado='1' WHERE email='"+email+"'")
+#         cur.close()
+#     except SignatureExpired:
+#         cur = mysql.connection.cursor()
+#         cur.execute("DELETE FROM users WHERE email='"+email+"' AND estado='0'")
+#         cur.close()
+#         return "<h1>EXPIRO EL TIEMPO VUELVA A INTERNTARLO</h1>"
+#     return "<h1>"+email+"  CONFIRMADO BIENVENIDO</h1>"
+
 
 if __name__ == '__main__':
     app.secret_key = "kamata16angulo"
