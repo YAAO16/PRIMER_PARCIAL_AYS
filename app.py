@@ -211,21 +211,26 @@ def mos_pro():
         
     return render_template('mos_prod.html',productos=productos)
 
-@app.route('/editarpro', methods=['GET','POST'])
+@app.route('/e_prod', methods=['GET','POST'])
 def editarprod():
-    cur =mysql.connection.cursor()
-    cur.execute("SELECT * FROM productos WHERE id = {0}".format(id))
-    item = cursor.fetchall()
-    cur.close()
+    
 
-    return render_template('editar_producto.html',productos=productos)
+    return render_template("editar_producto.html")
 
-@app.route('/eliminarpro', methods=['GET','POST'])
+# @app.route('/actu_pro', methods=['GET','POST'])
+# def actuprod():
+#     cur=mysql.connection.cursor()
+#     ute(cur.exec"SELECT * FROM creacion_productos WHERE id = {0}".format(id==1))
+#     item=cur.fetchall()
+#     cur.close()
+#     return render_template('mos_prod.html')
+
+@app.route('/eliminarpro/<int:id>')
 def eliminarprod():
     cur=mysql.connection.cursor()
-    cur.execute("delete from productos where id={0}".format(id))
+    cur.execute("DELETE from creacion_productos WHERE id={0}".format(id))
     cur.close()
-    return render_template('mos_prod.html',productos=productos)
+    return render_template('mos_prod.html')
 
 @app.route('/carrito', methods=['GET','POST'])
 def carrito():
