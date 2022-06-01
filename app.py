@@ -189,7 +189,7 @@ def registrar():
 
          # Reemplaza estos valores con tus credenciales de Google Mail
         username = 'yeinerangulo2020@itp.edu.co'
-        password = '1193221281'
+        password = 'adrian16x'
 
         server = SMTP('smtp.gmail.com:587')
         server.starttls()
@@ -227,7 +227,7 @@ def editarprod():
 
 @app.route('/eliminarpro/<int:id>')
 def eliminarprod():
-    cur=mysql.connection.cursor()
+    cur=db.cursor()
     cur.execute("DELETE from creacion_productos WHERE id={0}".format(id))
     cur.close()
     return render_template('mos_prod.html')
